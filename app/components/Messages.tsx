@@ -175,7 +175,7 @@ export default function Messages() {
               </li>
               <li>
                 <a
-                  href="https://github.com"
+                  href="https://github.com/Abonsama"
                   target="_blank"
                   rel="noreferrer"
                   className="hover:text-[var(--primary-color)] text-white transition-colors"
@@ -185,7 +185,7 @@ export default function Messages() {
               </li>
               <li>
                 <a
-                  href="https://linkedin.com"
+                  href="https://in/mohamed-adil-9a12322b4"
                   target="_blank"
                   rel="noreferrer"
                   className="hover:text-[var(--primary-color)] text-white transition-colors"
