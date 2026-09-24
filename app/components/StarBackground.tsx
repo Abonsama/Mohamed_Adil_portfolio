@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useRef, useMemo } from "react";
+import React, { useRef, useMemo, useState, useEffect } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
 import * as THREE from "three";
 
@@ -41,13 +41,13 @@ const SharpStarShaderMaterial = {
   `,
 };
 
-function Stars() {
+function Stars({ count }: { count: number }) {
   const pointsRef = useRef<THREE.Points>(null!);
   const shaderRef = useRef<THREE.ShaderMaterial>(null!);
 
   // Higher count (3,000) of smaller particles for proper star field density
+  // on desktop; a lighter count is passed in on mobile (see StarBackground).
   const [positions, colors] = useMemo(() => {
-    const count = 3000;
     const pos = new Float32Array(count * 3);
     const col = new Float32Array(count * 3);
 
@@ -68,7 +68,7 @@ function Stars() {
     }
 
     return [pos, col];
-  }, []);
+  }, [count]);
 
   // Subtle rotation
   useFrame((state, delta) => {
@@ -107,14 +107,26 @@ function Stars() {
 }
 
 export default function StarBackground() {
+  // CHANGED (perf only, no visual/style change on desktop): on phones,
+  // rendering 3,000 additive-blended points at full device pixel ratio
+  // (often 2-3x on modern screens) is the single heaviest thing on this
+  // page. Below md we cap DPR, drop antialiasing, and thin the star count.
+  // This component is dynamically imported with ssr:false, so window is
+  // always available by the time this runs client-side — no hydration
+  // mismatch or flash of the wrong state.
+  const [isMobile] = useState(
+    () => typeof window !== "undefined" && window.innerWidth < 768
+  );
+
   return (
     <div className="fixed inset-0 w-full h-full pointer-events-none z-0">
       <Canvas
         camera={{ position: [0, 0, 12], fov: 60 }}
-        gl={{ antialias: true, alpha: true }}
+        gl={{ antialias: !isMobile, alpha: true }}
+        dpr={isMobile ? [1, 1.5] : undefined}
       >
         <ambientLight intensity={0.5} />
-        <Stars />
+        <Stars count={isMobile ? 1200 : 3000} />
       </Canvas>
     </div>
   );
