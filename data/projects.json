@@ -62,5 +62,30 @@
     "links": {
       "live": "https://google.com"
     }
+  },
+  {
+    "id": "1790289438628",
+    "title": "Datad",
+    "color": "#e3eb00",
+    "orbitRadius": 0,
+    "orbitSpeed": 0.006,
+    "size": 16,
+    "overview": {
+      "title": "Overview",
+      "content": "االكوكب الاصفر نيهاهاهاهاه"
+    },
+    "why": {
+      "title": "Why Built",
+      "content": "ناني "
+    },
+    "techStack": {
+      "title": "Tech Stack",
+      "content": "وات دو يو ميين"
+    },
+    "challenges": {
+      "title": "Challenges",
+      "content": "الله في عوجة ماف"
+    },
+    "links": {}
   }
 ]
