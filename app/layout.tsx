@@ -6,6 +6,7 @@ import Messages from "./components/Messages";
 import NavBar from "./components/navBar";
 import ThemeSelection from "./components/ThemeSelection";
 import HeaderControls from "./components/HeaderControls";
+import MobileMenuToggle from "./components/Mobilemenutoggle";
 import { AuthProvider } from "./context/AuthContext";
 
 const orbitronSans = Orbitron({
@@ -39,16 +40,35 @@ export default function RootLayout({
           <div className="layer absolute w-full h-full inset-0 z-0 pointer-events-none bg-[radial-gradient(circle_at_center,#0A0F1F_0%,#000000_100%)] opacity-100" />
 
           {/* 2. GLOBAL HEADER */}
-          <header className="relative w-full h-1/16 top-px left-0 z-40 px-8 pt-6 flex items-center justify-between pointer-events-auto">
-            <div className="relative flex items-center gap-4">
-              <Messages />
+          <header className="relative w-full z-40 px-4 sm:px-8 py-4 pointer-events-auto">
+            {/* Desktop / tablet — original 3-column row, untouched */}
+            <div className="hidden md:flex items-center justify-between">
+              <div className="relative flex items-center gap-4">
+                <Messages />
+              </div>
+
+              <NavBar />
+
+              <div className="flex relative items-center gap-6 z-50">
+                <HeaderControls />
+                <ThemeSelection />
+              </div>
             </div>
 
-            <NavBar />
+            {/* Mobile — compact row + hamburger drop-down */}
+            <div className="flex md:hidden items-center justify-between">
+              <Messages />
 
-            <div className="flex relative items-center gap-6 z-50">
-              <HeaderControls />
-              <ThemeSelection />
+              <MobileMenuToggle>
+                <NavBar />
+                {/* Login + Theme share one row so the panel doesn't stack
+                    into a tall, crowded column. justify-between keeps them
+                    apart if the panel is narrow. */}
+                <div className="flex items-center justify-between gap-4">
+                  <HeaderControls />
+                  <ThemeSelection />
+                </div>
+              </MobileMenuToggle>
             </div>
           </header>
 
