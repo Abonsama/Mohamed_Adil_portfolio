@@ -31,15 +31,22 @@ export default function ProjectsPage() {
   };
 
   return (
-    <div className="relative w-full h-[calc(100vh-90px)] overflow-hidden">
+    // CHANGED: same fix as the skills page — locked viewport height +
+    // overflow-hidden was clipping the project list on mobile once the
+    // canvas and list both needed vertical space. md+ is untouched.
+    <div className="relative w-full min-h-[calc(100vh-90px)] overflow-y-auto md:h-[calc(100vh-90px)] md:overflow-hidden">
       {/* 1. STAR BACKGROUND */}
       <StarBackground />
 
       {/* 2. SOLAR SYSTEM PAGE CONTENT */}
-      <div className="relative z-10 w-full h-full p-8 text-white flex flex-col md:flex-row items-center justify-between gap-8">
+      <div className="relative z-10 w-full min-h-full px-4 py-8 sm:p-8 text-white flex flex-col md:flex-row items-center justify-between gap-8">
         
         {/* LEFT COLUMN: SCROLLABLE PROJECT LIST */}
-        <div className="flex flex-col gap-4 w-full md:w-1/3 max-h-[80vh] overflow-y-auto pr-2 custom-scrollbar">
+        {/* CHANGED: nested max-h-[80vh]/overflow-y-auto now only applies at
+            md+, avoiding a scroll-inside-a-scroll on mobile. Also given
+            order-2 below so the canvas (the more engaging visual) shows
+            first on mobile; desktop keeps its original list-left order. */}
+        <div className="order-2 md:order-1 flex flex-col gap-4 w-full md:w-1/3 md:max-h-[80vh] md:overflow-y-auto pr-2 custom-scrollbar">
           <div className="flex items-center justify-between border-b border-white/10 pb-3">
             <h1 className="text-2xl font-bold font-mono tracking-wider">
               PROJECTS
@@ -97,7 +104,7 @@ export default function ProjectsPage() {
         </div>
 
         {/* RIGHT COLUMN: 2D SOLAR SYSTEM CANVAS */}
-        <div className="flex-1 flex items-center justify-center">
+        <div className="order-1 md:order-2 flex-1 flex items-center justify-center w-full">
           <SolarSystemCanvas
             projects={projects}
             activeProject={activeProject}
