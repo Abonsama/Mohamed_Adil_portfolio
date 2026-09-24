@@ -1,251 +1,237 @@
 "use client";
 
-import React, { useState } from "react";
-import { Project, ProjectSection } from "@/app/actions/projects";
+import React, { useState, useEffect } from "react";
+import { IoClose, IoChevronBack, IoChevronForward, IoOpenOutline } from "react-icons/io5";
+import { FaGithub, FaLinkedin } from "react-icons/fa";
+import { Project, ProjectSection } from "../actions/projects";
 
-interface Props {
-  project: Project;
+interface CyberpunkProjectModalProps {
+  project: Project | null;
   onClose: () => void;
 }
 
-type TabType = "overview" | "why" | "techStack" | "challenges" | "links";
+export default function CyberpunkProjectModal({
+  project,
+  onClose,
+}: CyberpunkProjectModalProps) {
+  const [currentSlide, setCurrentSlide] = useState(0);
 
-const CHARS_PER_PAGE = 220; // Auto-paginates long text chunks
+  useEffect(() => {
+    setCurrentSlide(0);
+  }, [project]);
 
-export default function CyberpunkProjectModal({ project, onClose }: Props) {
-  const [activeTab, setActiveTab] = useState<TabType>("overview");
-  const [pageIndex, setPageIndex] = useState(0);
-  const [isImageExpanded, setIsImageExpanded] = useState(false);
+  if (!project) return null;
 
-  // Get active section payload
-  const getSectionData = (): ProjectSection => {
-    switch (activeTab) {
-      case "why":
-        return project.why;
-      case "techStack":
-        return project.techStack;
-      case "challenges":
-        return project.challenges;
-      default:
-        return project.overview;
-    }
+  // 1. Build normal sections
+  const sections: { id: string; label: string; data?: ProjectSection }[] = [
+    { id: "overview", label: "OVERVIEW", data: project.overview },
+    { id: "why", label: "WHY BUILT", data: project.why },
+    { id: "techStack", label: "TECH STACK", data: project.techStack },
+    { id: "challenges", label: "CHALLENGES", data: project.challenges },
+  ].filter((s) => s.data && s.data.content);
+
+  // 2. Append LINKS as its own full section slide if any link exists
+  const hasLinks = project.links && (project.links.live || project.links.github || project.links.linkedin);
+  if (hasLinks) {
+    sections.push({
+      id: "links",
+      label: "PROJECT LINKS",
+    });
+  }
+
+  const activeSection = sections[currentSlide] || sections[0];
+
+  const handlePrev = () => {
+    setCurrentSlide((prev) => (prev === 0 ? sections.length - 1 : prev - 1));
   };
 
-  const currentSection = getSectionData();
-
-  // Split text into pages if content exceeds space
-  const textPages = React.useMemo(() => {
-    const text = currentSection.content || "";
-    if (text.length <= CHARS_PER_PAGE) return [text];
-    const pages: string[] = [];
-    for (let i = 0; i < text.length; i += CHARS_PER_PAGE) {
-      pages.push(text.slice(i, i + CHARS_PER_PAGE));
-    }
-    return pages;
-  }, [currentSection]);
-
-  const handleTabChange = (tab: TabType) => {
-    setActiveTab(tab);
-    setPageIndex(0);
+  const handleNext = () => {
+    setCurrentSlide((prev) => (prev === sections.length - 1 ? 0 : prev + 1));
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-lg">
-      
-      {/* EXPANDED IMAGE PREVIEW MODAL */}
-      {isImageExpanded && currentSection.imageUrl && (
-        <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/95 p-6 cursor-zoom-out"
-          onClick={() => setIsImageExpanded(false)}
-        >
-          <div className="relative max-w-4xl w-full max-h-[85vh] border-2 border-[var(--primary-color)] p-2 bg-black rounded-lg">
-            {/* Cyberpunk Bracket Corners */}
-            <div className="absolute -top-2 -left-2 w-6 h-6 border-t-2 border-l-2 border-white" />
-            <div className="absolute -top-2 -right-2 w-6 h-6 border-t-2 border-r-2 border-white" />
-            <div className="absolute -bottom-2 -left-2 w-6 h-6 border-b-2 border-l-2 border-white" />
-            <div className="absolute -bottom-2 -right-2 w-6 h-6 border-b-2 border-r-2 border-white" />
-
-            <img
-              src={currentSection.imageUrl}
-              alt="Expanded Preview"
-              className="w-full h-auto max-h-[75vh] object-contain rounded"
-            />
-            <p className="text-center text-xs font-mono text-gray-400 mt-2">
-              [CLICK ANYWHERE TO CLOSE PREVIEW]
-            </p>
-          </div>
-        </div>
-      )}
-
-      {/* MAIN CYBERPUNK HUD WINDOW */}
-      <div className="relative w-full max-w-3xl bg-black/90 border border-white/20 p-8 rounded-xl shadow-2xl flex flex-col gap-6">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/85 backdrop-blur-md p-4 md:p-8">
+      {/* Modal Container with Accent Corners */}
+      <div className="relative w-full max-w-5xl min-h-[580px] max-h-[90vh] bg-neutral-950/95 border border-[var(--primary-color,#00ffcc)]/40 shadow-[0_0_25px_rgba(0,255,204,0.15)] flex flex-col justify-between text-neutral-200">
         
-        {/* FOUR CYBERPUNK CORNER BRACKETS */}
-        <div className="absolute -top-3 -left-3 w-8 h-8 border-t-2 border-l-2 border-white pointer-events-none" />
-        <div className="absolute -top-3 -right-3 w-8 h-8 border-t-2 border-r-2 border-white pointer-events-none" />
-        <div className="absolute -bottom-3 -left-3 w-8 h-8 border-b-2 border-l-2 border-white pointer-events-none" />
-        <div className="absolute -bottom-3 -right-3 w-8 h-8 border-b-2 border-r-2 border-white pointer-events-none" />
+        {/* Cyberpunk HUD Corner Brackets */}
+        <div className="absolute -top-1 -left-1 w-4 h-4 border-t-2 border-l-2 border-[var(--primary-color,#00ffcc)] z-20" />
+        <div className="absolute -top-1 -right-1 w-4 h-4 border-t-2 border-r-2 border-[var(--primary-color,#00ffcc)] z-20" />
+        <div className="absolute -bottom-1 -left-1 w-4 h-4 border-b-2 border-l-2 border-[var(--primary-color,#00ffcc)] z-20" />
+        <div className="absolute -bottom-1 -right-1 w-4 h-4 border-b-2 border-r-2 border-[var(--primary-color,#00ffcc)] z-20" />
 
-        {/* HEADER & CLOSE BUTTON */}
-        <div className="flex items-center justify-between border-b border-white/10 pb-4">
+        {/* Header */}
+        <div className="flex items-center justify-between p-6 border-b border-neutral-800/80 bg-neutral-900/40">
           <div className="flex items-center gap-3">
             <span
-              className="w-4 h-4 rounded-full shadow-lg"
-              style={{ backgroundColor: project.color }}
+              className="w-3 h-3 rounded-full shadow-[0_0_8px_currentColor]"
+              style={{ backgroundColor: project.color, color: project.color }}
             />
-            <h2 className="text-2xl font-bold font-mono tracking-wider text-white">
+            <h2 className="text-xl md:text-2xl font-bold tracking-wider text-white uppercase font-mono">
               {project.title}
             </h2>
           </div>
-
           <button
             onClick={onClose}
-            className="text-gray-400 hover:text-white font-mono text-sm px-3 py-1 bg-white/5 border border-white/20 rounded hover:bg-white/10 transition-colors"
+            className="p-1.5 text-neutral-400 hover:text-white hover:bg-neutral-800/60 rounded transition-colors"
+            aria-label="Close modal"
           >
-            [ESC / CLOSE]
+            <IoClose className="w-6 h-6" />
           </button>
         </div>
 
-        {/* HUD DOT / TAB NAVIGATION */}
-        <div className="flex items-center gap-2 overflow-x-auto pb-2 border-b border-white/10 custom-scrollbar">
-          {[
-            { key: "overview", label: "01. OVERVIEW" },
-            { key: "why", label: "02. WHY BUILT" },
-            { key: "techStack", label: "03. TECH STACK" },
-            { key: "challenges", label: "04. CHALLENGES" },
-            { key: "links", label: "05. LINKS" },
-          ].map((tab) => (
-            <button
-              key={tab.key}
-              onClick={() => handleTabChange(tab.key as TabType)}
-              className={`px-3 py-1.5 font-mono text-xs tracking-wider rounded transition-all flex items-center gap-2 ${
-                activeTab === tab.key
-                  ? "bg-white text-black font-bold shadow-lg"
-                  : "bg-black/50 text-gray-400 hover:text-white border border-white/10"
-              }`}
-            >
-              <span
-                className={`w-2 h-2 rounded-full ${
-                  activeTab === tab.key ? "bg-black" : "bg-gray-600"
-                }`}
-              />
-              {tab.label}
-            </button>
-          ))}
+        {/* Main Content Viewport */}
+        <div className="p-6 md:p-8 flex-1 overflow-y-auto">
+          {activeSection.id === "links" ? (
+            /* Dedicated FULL LINKS SLIDE View */
+            <div className="h-full flex flex-col justify-center space-y-6">
+              <div className="text-xs font-mono tracking-widest text-[var(--primary-color,#00ffcc)] uppercase">
+                // SEC_0{currentSlide + 1} :: PROJECT ACCESS ENDPOINTS
+              </div>
+              <h3 className="text-2xl font-bold text-white font-mono">
+                External Resources & Links
+              </h3>
+              
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-2">
+                {project.links.live && (
+                  <a
+                    href={project.links.live}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="group relative p-6 bg-neutral-900/60 border border-neutral-800 hover:border-[var(--primary-color,#00ffcc)] rounded-lg transition-all hover:shadow-[0_0_15px_rgba(0,255,204,0.2)] flex flex-col justify-between h-44"
+                  >
+                    <div className="flex items-center justify-between">
+                      <IoOpenOutline className="w-8 h-8 text-[var(--primary-color,#00ffcc)]" />
+                      <span className="text-[10px] font-mono text-neutral-500 group-hover:text-neutral-300">
+                        [ LIVE DEMO ]
+                      </span>
+                    </div>
+                    <div>
+                      <h4 className="text-lg font-mono font-bold text-white group-hover:text-[var(--primary-color,#00ffcc)] transition-colors">
+                        Deploy Target
+                      </h4>
+                      <p className="text-xs text-neutral-400 mt-1 font-sans">
+                        Launch public production preview
+                      </p>
+                    </div>
+                  </a>
+                )}
+
+                {project.links.github && (
+                  <a
+                    href={project.links.github}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="group relative p-6 bg-neutral-900/60 border border-neutral-800 hover:border-white rounded-lg transition-all hover:shadow-[0_0_15px_rgba(255,255,255,0.15)] flex flex-col justify-between h-44"
+                  >
+                    <div className="flex items-center justify-between">
+                      <FaGithub className="w-8 h-8 text-neutral-300 group-hover:text-white" />
+                      <span className="text-[10px] font-mono text-neutral-500 group-hover:text-neutral-300">
+                        [ REPOSITORY ]
+                      </span>
+                    </div>
+                    <div>
+                      <h4 className="text-lg font-mono font-bold text-white transition-colors">
+                        Source Code
+                      </h4>
+                      <p className="text-xs text-neutral-400 mt-1 font-sans">
+                        Inspect codebase on GitHub
+                      </p>
+                    </div>
+                  </a>
+                )}
+
+                {project.links.linkedin && (
+                  <a
+                    href={project.links.linkedin}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="group relative p-6 bg-neutral-900/60 border border-neutral-800 hover:border-blue-400 rounded-lg transition-all hover:shadow-[0_0_15px_rgba(96,165,250,0.2)] flex flex-col justify-between h-44"
+                  >
+                    <div className="flex items-center justify-between">
+                      <FaLinkedin className="w-8 h-8 text-blue-400" />
+                      <span className="text-[10px] font-mono text-neutral-500 group-hover:text-neutral-300">
+                        [ NETWORK ]
+                      </span>
+                    </div>
+                    <div>
+                      <h4 className="text-lg font-mono font-bold text-white transition-colors">
+                        Project Article
+                      </h4>
+                      <p className="text-xs text-neutral-400 mt-1 font-sans">
+                        View write-up or announcement
+                      </p>
+                    </div>
+                  </a>
+                )}
+              </div>
+            </div>
+          ) : (
+            /* Standard Section Content View */
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center h-full">
+              {activeSection.data?.imageUrl ? (
+                <div className="relative w-full h-64 md:h-80 rounded overflow-hidden border border-neutral-800 bg-black">
+                  <img
+                    src={activeSection.data.imageUrl}
+                    alt={activeSection.label}
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+              ) : (
+                <div className="w-full h-64 md:h-80 rounded border border-neutral-800/80 bg-neutral-900/20 flex items-center justify-center font-mono text-neutral-600 text-xs tracking-widest">
+                  [ NO SIGNAL MEDIA ]
+                </div>
+              )}
+
+              <div className="flex flex-col justify-between h-full space-y-4">
+                <div>
+                  <div className="text-xs font-mono tracking-widest text-[var(--primary-color,#00ffcc)] mb-2 uppercase">
+                    // SEC_0{currentSlide + 1} :: {activeSection.label}
+                  </div>
+                  <h3 className="text-xl font-semibold text-white mb-3 font-mono">
+                    {activeSection.data?.title || activeSection.label}
+                  </h3>
+                  <p className="text-neutral-300 leading-relaxed text-sm md:text-base font-sans">
+                    {activeSection.data?.content}
+                  </p>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
 
-        {/* BODY CONTENT AREA */}
-        {activeTab !== "links" ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-start min-h-[220px]">
-            {/* TEXT & AUTO-PAGINATION */}
-            <div className="flex flex-col justify-between h-full gap-4">
-              <div className="flex flex-col gap-2">
-                <h3 className="text-lg font-bold font-mono text-[var(--primary-color)] uppercase">
-                  {currentSection.title}
-                </h3>
-                <p className="text-gray-300 font-sans leading-relaxed text-sm">
-                  {textPages[pageIndex] || "No content specified."}
-                </p>
-              </div>
+        {/* Arrow Navigation Footer */}
+        <div className="flex items-center justify-between p-4 md:p-6 border-t border-neutral-800/80 bg-neutral-900/40">
+          <button
+            onClick={handlePrev}
+            className="flex items-center gap-2 px-4 py-2 border border-neutral-700/80 hover:border-[var(--primary-color,#00ffcc)] text-xs font-mono text-neutral-300 hover:text-white transition-colors"
+          >
+            <IoChevronBack className="w-4 h-4" /> PREV
+          </button>
 
-              {/* PAGINATION CONTROLS (If content splits across pages) */}
-              {textPages.length > 1 && (
-                <div className="flex items-center gap-3 pt-2 font-mono text-xs">
-                  <button
-                    disabled={pageIndex === 0}
-                    onClick={() => setPageIndex((p) => p - 1)}
-                    className="px-2 py-1 bg-white/10 rounded disabled:opacity-30 hover:bg-white/20"
-                  >
-                    ← PREV
-                  </button>
-                  <span className="text-gray-400">
-                    PAGE {pageIndex + 1} / {textPages.length}
-                  </span>
-                  <button
-                    disabled={pageIndex === textPages.length - 1}
-                    onClick={() => setPageIndex((p) => p + 1)}
-                    className="px-2 py-1 bg-white/10 rounded disabled:opacity-30 hover:bg-white/20"
-                  >
-                    NEXT →
-                  </button>
-                </div>
-              )}
-            </div>
-
-            {/* SCREENSHOT PREVIEW CARD */}
-            <div className="relative group cursor-zoom-in border border-white/20 rounded-lg overflow-hidden bg-black/60 p-1">
-              {currentSection.imageUrl ? (
-                <img
-                  src={currentSection.imageUrl}
-                  alt="Section Screenshot"
-                  onClick={() => setIsImageExpanded(true)}
-                  className="w-full h-48 object-cover rounded group-hover:scale-105 transition-transform duration-300"
-                />
-              ) : (
-                <div className="w-full h-48 flex items-center justify-center font-mono text-xs text-gray-500 border border-dashed border-gray-700">
-                  [ NO IMAGE ATTACHED ]
-                </div>
-              )}
-              <span className="absolute bottom-2 right-2 px-2 py-1 bg-black/80 text-[10px] font-mono text-gray-300 rounded opacity-0 group-hover:opacity-100 transition-opacity">
-                Click to Expand
-              </span>
-            </div>
+          {/* Slide Indicator Dots */}
+          <div className="flex items-center gap-2">
+            {sections.map((_, idx) => (
+              <button
+                key={idx}
+                onClick={() => setCurrentSlide(idx)}
+                className={`h-2 transition-all ${
+                  idx === currentSlide
+                    ? "bg-[var(--primary-color,#00ffcc)] w-6"
+                    : "bg-neutral-700 hover:bg-neutral-500 w-2"
+                }`}
+                aria-label={`Go to section ${idx + 1}`}
+              />
+            ))}
           </div>
-        ) : (
-          /* LINKS TAB */
-          <div className="flex flex-col gap-4 min-h-[220px] justify-center">
-            <h3 className="text-lg font-bold font-mono text-[var(--primary-color)] uppercase">
-              Project Access & Links
-            </h3>
-            
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-              {project.links?.live && (
-                <a
-                  href={project.links.live}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="flex items-center gap-3 p-4 bg-white/5 border border-white/20 rounded-xl hover:bg-white/10 hover:border-[var(--primary-color)] transition-all group"
-                >
-                  <span className="text-xl">🌐</span>
-                  <div>
-                    <p className="font-bold text-sm text-white font-mono">Live Demo</p>
-                    <p className="text-xs text-gray-400 group-hover:underline">Visit Site →</p>
-                  </div>
-                </a>
-              )}
 
-              {project.links?.github && (
-                <a
-                  href={project.links.github}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="flex items-center gap-3 p-4 bg-white/5 border border-white/20 rounded-xl hover:bg-white/10 hover:border-[var(--primary-color)] transition-all group"
-                >
-                  <span className="text-xl">💻</span>
-                  <div>
-                    <p className="font-bold text-sm text-white font-mono">GitHub Repo</p>
-                    <p className="text-xs text-gray-400 group-hover:underline">View Source →</p>
-                  </div>
-                </a>
-              )}
-
-              {project.links?.linkedin && (
-                <a
-                  href={project.links.linkedin}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="flex items-center gap-3 p-4 bg-white/5 border border-white/20 rounded-xl hover:bg-white/10 hover:border-[var(--primary-color)] transition-all group"
-                >
-                  <span className="text-xl">🔗</span>
-                  <div>
-                    <p className="font-bold text-sm text-white font-mono">LinkedIn</p>
-                    <p className="text-xs text-gray-400 group-hover:underline">Post Details →</p>
-                  </div>
-                </a>
-              )}
-            </div>
-          </div>
-        )}
+          <button
+            onClick={handleNext}
+            className="flex items-center gap-2 px-4 py-2 border border-neutral-700/80 hover:border-[var(--primary-color,#00ffcc)] text-xs font-mono text-neutral-300 hover:text-white transition-colors"
+          >
+            NEXT <IoChevronForward className="w-4 h-4" />
+          </button>
+        </div>
       </div>
     </div>
   );
