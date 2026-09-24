@@ -300,7 +300,7 @@ export default function SkillsPage() {
 
                 <button
                   type="submit"
-                  className="w-full sm:w-auto px-6 py-2.5 bg-[var(--primary-color,#00ffcc)] text-black font-mono font-bold rounded-lg hover:opacity-90 transition-opacity text-sm shadow-[0_0_10px_rgba(0,255,204,0.3)]"
+                  className="w-full sm:w-auto px-6 py-2.5 bg-[var(--primary-color,#00ffcc)] text-white font-mono font-bold rounded-lg hover:opacity-90 transition-opacity text-sm border-2 border-[var(--primary-color,#00ffff)] shadow-[0_0_20px_var(--primary-color)] group-hover:shadow-[0_0_40px_var(--primary-color)]"
                 >
                   + ADD SKILL
                 </button>

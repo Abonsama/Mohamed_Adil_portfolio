@@ -324,7 +324,7 @@ export default function NewProjectPage() {
           <button
             type="submit"
             disabled={isSubmitting}
-            className="w-full p-4 bg-[var(--primary-color)] text-black font-bold font-mono rounded-xl hover:opacity-90 transition-opacity text-center disabled:opacity-50 mt-4 cursor-pointer"
+            className="w-full p-4 bg-[var(--primary-color)] text-white font-bold font-mono rounded-xl hover:opacity-90 transition-opacity text-center disabled:opacity-50 mt-4 cursor-pointer border-2 border-[var(--primary-color,#00ffff)] shadow-[0_0_20px_var(--primary-color)] group-hover:shadow-[0_0_40px_var(--primary-color)]"
           >
             {isSubmitting ? "Deploying Project..." : "+ Deploy Project"}
           </button>

@@ -238,9 +238,10 @@ export default function BlackHoleCanvas({
                 key={src}
                 src={src}
                 alt="Mechatronics & Software Engineer"
-                className="absolute inset-0 w-full h-full rounded-full pointer-events-none object-cover transition-opacity duration-300 ease-in-out"
+                className="object-contain absolute inset-0 w-full h-full rounded-full pointer-events-none transition-opacity duration-300 ease-in-out"
                 style={{
                   opacity: i === imageIndex && imageVisible ? 1 : 0,
+                  
                 }}
               />
             ))}
