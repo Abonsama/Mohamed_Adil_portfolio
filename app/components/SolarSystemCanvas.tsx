@@ -167,8 +167,16 @@ export default function SolarSystemCanvas({
     const canvas = canvasRef.current;
     if (!canvas) return;
     const rect = canvas.getBoundingClientRect();
-    const clickX = e.clientX - rect.left;
-    const clickY = e.clientY - rect.top;
+
+    // FIX: the canvas has a fixed internal resolution (500x500) but is
+    // CSS-scaled down via `max-w-full h-auto` on narrow screens. Without
+    // this scale correction, click hit-testing used raw CSS pixels against
+    // drawing coordinates from the unscaled 500x500 space, so planet clicks
+    // silently missed on any screen narrower than 500px.
+    const scaleX = canvas.width / rect.width;
+    const scaleY = canvas.height / rect.height;
+    const clickX = (e.clientX - rect.left) * scaleX;
+    const clickY = (e.clientY - rect.top) * scaleY;
 
     projects.forEach((p) => {
       const coords = p as unknown as { currentX?: number; currentY?: number };
@@ -189,8 +197,12 @@ export default function SolarSystemCanvas({
     const canvas = canvasRef.current;
     if (!canvas) return;
     const rect = canvas.getBoundingClientRect();
-    const mouseX = e.clientX - rect.left;
-    const mouseY = e.clientY - rect.top;
+
+    // Same scale correction as the click handler above.
+    const scaleX = canvas.width / rect.width;
+    const scaleY = canvas.height / rect.height;
+    const mouseX = (e.clientX - rect.left) * scaleX;
+    const mouseY = (e.clientY - rect.top) * scaleY;
 
     let found: Project | null = null;
     projects.forEach((p) => {
@@ -217,7 +229,7 @@ export default function SolarSystemCanvas({
       onClick={handleCanvasClick}
       onMouseMove={handleCanvasMouseMove}
       onMouseLeave={() => onHoverProject(null)}
-      className="cursor-pointer max-w-full h-auto"
+      className="cursor-pointer w-full max-w-[500px] h-auto"
     />
   );
 }
