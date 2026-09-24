@@ -141,12 +141,16 @@ export default function NewProjectPage() {
 
   return (
     /* Forced viewport scrolling wrapper */
-    <div className="fixed inset-0 z-50 w-full h-full overflow-y-auto bg-black text-white p-6 md:p-12">
+    // CHANGED: padding stepped down (p-4 → p-6 → p-12) instead of jumping
+    // straight from p-6 to p-12 at md, so content isn't hugging the edges
+    // on small phones. Everything else in this file was already responsive
+    // and is untouched.
+    <div className="fixed inset-0 z-50 w-full h-full overflow-y-auto bg-black text-white p-4 sm:p-6 md:p-12">
       <div className="pt-6 max-w-3xl mx-auto flex flex-col gap-8 pb-32">
         
         {/* Header */}
-        <div className="flex items-center justify-between border-b border-white/20 pb-4">
-          <h1 className="text-2xl font-bold font-mono">Create New Solar Project</h1>
+        <div className="flex items-center justify-between gap-3 flex-wrap border-b border-white/20 pb-4">
+          <h1 className="text-xl sm:text-2xl font-bold font-mono">Create New Solar Project</h1>
           <button
             type="button"
             onClick={() => router.push("/projects")}
@@ -158,7 +162,7 @@ export default function NewProjectPage() {
 
         <form onSubmit={handleSubmit} className="flex flex-col gap-6">
           {/* 1. ORBITAL PROPERTIES */}
-          <div className="p-6 bg-white/5 border border-white/10 rounded-xl flex flex-col gap-4">
+          <div className="p-4 sm:p-6 bg-white/5 border border-white/10 rounded-xl flex flex-col gap-4">
             <h2 className="text-lg font-bold font-mono text-[var(--primary-color)]">
               1. Orbital Properties
             </h2>
@@ -177,7 +181,7 @@ export default function NewProjectPage() {
                 />
               </div>
 
-              <div className="flex items-center gap-6">
+              <div className="flex items-center gap-6 flex-wrap">
                 <div>
                   <label className="text-xs text-gray-400 font-mono block mb-1">
                     Planet Color
@@ -209,7 +213,7 @@ export default function NewProjectPage() {
           </div>
 
           {/* 2. OVERVIEW */}
-          <div className="p-6 bg-white/5 border border-white/10 rounded-xl flex flex-col gap-4">
+          <div className="p-4 sm:p-6 bg-white/5 border border-white/10 rounded-xl flex flex-col gap-4">
             <h2 className="text-lg font-bold font-mono text-[var(--primary-color)]">
               2. Overview Section
             </h2>
@@ -229,7 +233,7 @@ export default function NewProjectPage() {
           </div>
 
           {/* 3. WHY BUILT */}
-          <div className="p-6 bg-white/5 border border-white/10 rounded-xl flex flex-col gap-4">
+          <div className="p-4 sm:p-6 bg-white/5 border border-white/10 rounded-xl flex flex-col gap-4">
             <h2 className="text-lg font-bold font-mono text-[var(--primary-color)]">
               3. Why Built Section
             </h2>
@@ -249,7 +253,7 @@ export default function NewProjectPage() {
           </div>
 
           {/* 4. TECH STACK */}
-          <div className="p-6 bg-white/5 border border-white/10 rounded-xl flex flex-col gap-4">
+          <div className="p-4 sm:p-6 bg-white/5 border border-white/10 rounded-xl flex flex-col gap-4">
             <h2 className="text-lg font-bold font-mono text-[var(--primary-color)]">
               4. Tech Stack Section
             </h2>
@@ -269,7 +273,7 @@ export default function NewProjectPage() {
           </div>
 
           {/* 5. CHALLENGES */}
-          <div className="p-6 bg-white/5 border border-white/10 rounded-xl flex flex-col gap-4">
+          <div className="p-4 sm:p-6 bg-white/5 border border-white/10 rounded-xl flex flex-col gap-4">
             <h2 className="text-lg font-bold font-mono text-[var(--primary-color)]">
               5. Challenges Section
             </h2>
@@ -289,7 +293,7 @@ export default function NewProjectPage() {
           </div>
 
           {/* 6. EXTERNAL LINKS */}
-          <div className="p-6 bg-white/5 border border-white/10 rounded-xl flex flex-col gap-4">
+          <div className="p-4 sm:p-6 bg-white/5 border border-white/10 rounded-xl flex flex-col gap-4">
             <h2 className="text-lg font-bold font-mono text-[var(--primary-color)]">
               6. External Links
             </h2>
