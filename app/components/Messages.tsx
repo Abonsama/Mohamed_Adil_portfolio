@@ -84,7 +84,13 @@ export default function Messages() {
 
       {/* 2. Expanded Contact Field */}
       {isExpanded && (
-        <div className="expandMessages absolute z-50 top-15 left-0 w-[280px] sm:w-[20vw] min-w-[280px] p-4 transition-all duration-300 ease-in-out border border-[var(--primary-color)] rounded-lg bg-black/95 backdrop-blur-md">
+        // CHANGED: `top-15` isn't part of Tailwind's default spacing scale
+        // (only specific steps like 14, 16, 20... are generated), so it was
+        // silently producing no CSS at all — the panel had no top offset
+        // from that class. Swapped for the arbitrary-value syntax so it
+        // actually compiles. Also swapped the fixed `min-w-[280px]` for a
+        // viewport-aware max-width so it can't overflow a ~320px phone.
+        <div className="expandMessages absolute z-50 top-[3.75rem] left-0 w-[calc(100vw-2rem)] max-w-[280px] sm:w-[20vw] sm:min-w-[280px] p-4 transition-all duration-300 ease-in-out border border-[var(--primary-color)] rounded-lg bg-black/95 backdrop-blur-md">
           <form onSubmit={handleSubmit} className="w-full flex flex-col gap-4">
             <h2 className="tracking-[4px] text-xl md:text-2xl font-extrabold text-white drop-shadow-[0_0_15px_rgba(255,255,255,0.3)]">
               contact me
