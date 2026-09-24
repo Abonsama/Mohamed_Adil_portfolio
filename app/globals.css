@@ -1,0 +1,32 @@
+@import "tailwindcss";
+
+:root {
+  /* Default Cyan Theme */
+  --primary-color: #281c59; /* The main accent color (cyan) */
+  --primary-color-hover: var(--primary-color);
+  --bg-color-stop-1: #000000;
+  --bg-color-stop-2: #05070D;
+  --bg-color-stop-3: #0B0F1A;
+  --text-color-primary: #ffffff;
+  --text-color-secondary: #aaaaaa;
+  --text-color-interactive: #666666; /* e.g., 'ENTER' and decorative lines */
+}
+
+* {
+  font-family: var(--font-Roboto-Condensed);
+}
+h1,h2,h3,h4{
+  font-family: var(--font-orbitron-sans);
+}
+/* Base Body Styles */
+body {
+  background-color: var(--bg-color-stop-1);
+  color: var(--text-color-primary);
+  font-family: ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  overflow: hidden; /* Prevent page scroll during animation */
+}
+button{
+  background: none;
+  border: none;
+  outline: none;
+}

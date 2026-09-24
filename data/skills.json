@@ -1,0 +1,38 @@
+[
+  {
+    "id": "1",
+    "name": "Front End",
+    "color": "#00ff00",
+    "level": 80
+  },
+  {
+    "id": "2",
+    "name": "Back End",
+    "color": "#8000ff",
+    "level": 70
+  },
+  {
+    "id": "3",
+    "name": "Robotics",
+    "color": "#ff0000",
+    "level": 90
+  },
+  {
+    "id": "4",
+    "name": "AI/ML",
+    "color": "#0000ff",
+    "level": 60
+  },
+  {
+    "id": "5",
+    "name": "Python",
+    "color": "#00ffff",
+    "level": 21
+  },
+  {
+    "id": "6",
+    "name": "C++",
+    "color": "#ffff00",
+    "level": 75
+  }
+]

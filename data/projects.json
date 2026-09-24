@@ -1,0 +1,35 @@
+[
+  {
+    "id": "2",
+    "title": "PLC Industrial Chocolate Factory",
+    "color": "#00f0ff",
+    "orbitRadius": 170,
+    "orbitSpeed": 0.005,
+    "size": 18,
+    "overview": {
+      "title": "Overview",
+      "content": "Automated chocolate manufacturing logic programmed for Siemens S7-1200 PLCs with WinCC HMI recipe selection.",
+      "imageUrl": "https://images.unsplash.com/photo-1581092160607-ee22621dd758?w=800"
+    },
+    "why": {
+      "title": "Why Built",
+      "content": "To demonstrate multi-stage industrial automation mixing valves, thermal heating control, and batch processing.",
+      "imageUrl": "https://images.unsplash.com/photo-1581092160607-ee22621dd758?w=800"
+    },
+    "techStack": {
+      "title": "Tech Stack",
+      "content": "Siemens S7-1200 PLC, TIA Portal, Ladder Logic, WinCC Flexible HMI, and 24V DC motor drives.",
+      "imageUrl": "https://images.unsplash.com/photo-1581092160607-ee22621dd758?w=800"
+    },
+    "challenges": {
+      "title": "Challenges",
+      "content": "Synchronizing analog temperature sensor feedback loops with high-speed proximity sensor ingredient dosing.",
+      "imageUrl": "https://images.unsplash.com/photo-1581092160607-ee22621dd758?w=800"
+    },
+    "links": {
+      "github": "https://github.com"
+    },
+    "currentX": 230.50556840782724,
+    "currentY": 81.12144263732563
+  }
+]
