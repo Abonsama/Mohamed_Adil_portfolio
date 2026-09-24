@@ -85,16 +85,22 @@ export default function SkillsPage() {
     .join(" ");
 
   return (
-    <div className="relative w-full h-[calc(100vh-90px)] overflow-hidden">
+    // CHANGED: fixed h-[calc(100vh-90px)] + overflow-hidden clipped content on
+    // mobile once the radar + list needed more vertical room than the viewport.
+    // Below md we let the page scroll; at md+ we restore the original locked
+    // viewport height / hidden overflow behavior exactly as before.
+    <div className="relative w-full min-h-[calc(100vh-90px)] overflow-y-auto md:h-[calc(100vh-90px)] md:overflow-hidden">
       {/* 1. CLEAN STAR CANVAS BACKGROUND (NO AVATAR / NO DETAILS BOX) */}
       <StarBackground />
 
       {/* 2. PAGE CONTENT LAYER */}
-      <div className="relative z-10 w-full h-full px-8 py-4 text-white flex flex-col md:flex-row items-center justify-center gap-12">
+      <div className="relative z-10 w-full min-h-full px-4 py-8 sm:px-8 sm:py-4 text-white flex flex-col md:flex-row items-center justify-center gap-8 md:gap-12">
         
         {/* LEFT SIDE: RADAR SVG GRAPH */}
         <div className="flex flex-col items-center gap-4 flex-shrink-0">
-          <div className="relative w-[300px] h-[300px]">
+          {/* CHANGED: fixed 300x300 shrunk to 260x260 below sm so it never
+              crowds a narrow phone screen; unchanged at sm and up. */}
+          <div className="relative w-[260px] h-[260px] sm:w-[300px] sm:h-[300px]">
             <svg className="w-full h-full overflow-visible" viewBox="0 0 300 300">
               {/* Background Web Rings */}
               {[0.25, 0.5, 0.75, 1].map((scale, ringIdx) => {
@@ -173,7 +179,10 @@ export default function SkillsPage() {
         </div>
 
         {/* RIGHT SIDE: INTERNAL SCROLLABLE LIST */}
-        <div className="flex flex-col gap-6 w-full max-w-xl max-h-[80vh] overflow-y-auto pr-2 custom-scrollbar">
+        {/* CHANGED: max-h-[80vh] + overflow-y-auto now only apply at md+.
+            On mobile the outer page already scrolls, so we don't want a
+            scroll-inside-a-scroll trap on touch devices. */}
+        <div className="flex flex-col gap-6 w-full max-w-xl md:max-h-[80vh] md:overflow-y-auto pr-2 custom-scrollbar">
           
           {/* SKILLS LIST */}
           <div className="grid grid-cols-1 gap-4">

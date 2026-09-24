@@ -9,13 +9,13 @@
     "id": "2",
     "name": "Back End",
     "color": "#8000ff",
-    "level": 70
+    "level": 31
   },
   {
     "id": "3",
     "name": "Robotics",
     "color": "#ff0000",
-    "level": 90
+    "level": 0
   },
   {
     "id": "4",
