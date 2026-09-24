@@ -52,7 +52,15 @@ export default function CyberpunkProjectModal({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/85 backdrop-blur-md p-4 md:p-8">
       {/* Modal Container with Accent Corners */}
-      <div className="relative w-full max-w-5xl min-h-[580px] max-h-[90vh] bg-neutral-950/95 border border-[var(--primary-color,#00ffcc)]/40 shadow-[0_0_25px_rgba(0,255,204,0.15)] flex flex-col justify-between text-neutral-200">
+      {/*
+        CHANGED: `min-h-[580px]` was a hard floor that wins over `max-h-[90vh]`
+        whenever the two conflict (per CSS spec min-height always beats
+        max-height), so on a short/landscape mobile viewport the modal was
+        forced taller than the screen. The 580px floor now only applies at
+        sm+ where there's room for it; mobile lets content define the height,
+        capped by max-h-[90vh] as before.
+      */}
+      <div className="relative w-full max-w-5xl min-h-0 sm:min-h-[580px] max-h-[90vh] bg-neutral-950/95 border border-[var(--primary-color,#00ffcc)]/40 shadow-[0_0_25px_rgba(0,255,204,0.15)] flex flex-col justify-between text-neutral-200">
         
         {/* Cyberpunk HUD Corner Brackets */}
         <div className="absolute -top-1 -left-1 w-4 h-4 border-t-2 border-l-2 border-[var(--primary-color,#00ffcc)] z-20" />
@@ -62,18 +70,18 @@ export default function CyberpunkProjectModal({
 
         {/* Header */}
         <div className="flex items-center justify-between p-6 border-b border-neutral-800/80 bg-neutral-900/40">
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-3 min-w-0">
             <span
-              className="w-3 h-3 rounded-full shadow-[0_0_8px_currentColor]"
+              className="w-3 h-3 rounded-full shadow-[0_0_8px_currentColor] flex-shrink-0"
               style={{ backgroundColor: project.color, color: project.color }}
             />
-            <h2 className="text-xl md:text-2xl font-bold tracking-wider text-white uppercase font-mono">
+            <h2 className="text-xl md:text-2xl font-bold tracking-wider text-white uppercase font-mono truncate">
               {project.title}
             </h2>
           </div>
           <button
             onClick={onClose}
-            className="p-1.5 text-neutral-400 hover:text-white hover:bg-neutral-800/60 rounded transition-colors"
+            className="p-1.5 text-neutral-400 hover:text-white hover:bg-neutral-800/60 rounded transition-colors flex-shrink-0"
             aria-label="Close modal"
           >
             <IoClose className="w-6 h-6" />
@@ -170,7 +178,7 @@ export default function CyberpunkProjectModal({
             /* Standard Section Content View */
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center h-full">
               {activeSection.data?.imageUrl ? (
-                <div className="relative w-full h-64 md:h-80 rounded overflow-hidden border border-neutral-800 bg-black">
+                <div className="relative w-full h-56 sm:h-64 md:h-80 rounded overflow-hidden border border-neutral-800 bg-black">
                   <img
                     src={activeSection.data.imageUrl}
                     alt={activeSection.label}
@@ -178,7 +186,7 @@ export default function CyberpunkProjectModal({
                   />
                 </div>
               ) : (
-                <div className="w-full h-64 md:h-80 rounded border border-neutral-800/80 bg-neutral-900/20 flex items-center justify-center font-mono text-neutral-600 text-xs tracking-widest">
+                <div className="w-full h-56 sm:h-64 md:h-80 rounded border border-neutral-800/80 bg-neutral-900/20 flex items-center justify-center font-mono text-neutral-600 text-xs tracking-widest">
                   [ NO SIGNAL MEDIA ]
                 </div>
               )}
@@ -201,12 +209,12 @@ export default function CyberpunkProjectModal({
         </div>
 
         {/* Arrow Navigation Footer */}
-        <div className="flex items-center justify-between p-4 md:p-6 border-t border-neutral-800/80 bg-neutral-900/40">
+        <div className="flex items-center justify-between p-4 md:p-6 border-t border-neutral-800/80 bg-neutral-900/40 gap-2">
           <button
             onClick={handlePrev}
-            className="flex items-center gap-2 px-4 py-2 border border-neutral-700/80 hover:border-[var(--primary-color,#00ffcc)] text-xs font-mono text-neutral-300 hover:text-white transition-colors"
+            className="flex items-center gap-2 px-3 sm:px-4 py-2 border border-neutral-700/80 hover:border-[var(--primary-color,#00ffcc)] text-xs font-mono text-neutral-300 hover:text-white transition-colors flex-shrink-0"
           >
-            <IoChevronBack className="w-4 h-4" /> PREV
+            <IoChevronBack className="w-4 h-4" /> <span className="hidden sm:inline">PREV</span>
           </button>
 
           {/* Slide Indicator Dots */}
@@ -227,9 +235,9 @@ export default function CyberpunkProjectModal({
 
           <button
             onClick={handleNext}
-            className="flex items-center gap-2 px-4 py-2 border border-neutral-700/80 hover:border-[var(--primary-color,#00ffcc)] text-xs font-mono text-neutral-300 hover:text-white transition-colors"
+            className="flex items-center gap-2 px-3 sm:px-4 py-2 border border-neutral-700/80 hover:border-[var(--primary-color,#00ffcc)] text-xs font-mono text-neutral-300 hover:text-white transition-colors flex-shrink-0"
           >
-            NEXT <IoChevronForward className="w-4 h-4" />
+            <span className="hidden sm:inline">NEXT</span> <IoChevronForward className="w-4 h-4" />
           </button>
         </div>
       </div>
