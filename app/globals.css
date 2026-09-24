@@ -23,7 +23,7 @@ body {
   background-color: var(--bg-color-stop-1);
   color: var(--text-color-primary);
   font-family: ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
-  overflow: hidden; /* Prevent page scroll during animation */
+  overflow-y: hidden; /**Prevent page scroll during animation**/
 }
 button{
   background: none;

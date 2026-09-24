@@ -8,22 +8,41 @@ interface BlackHoleCanvasProps {
   WireframeComponent?: React.ReactNode;
   onEnter?: () => void;
   onExit?: () => void;
-  initialExpanded?: boolean; // New prop
 }
+
+// Add more filenames here as you drop them into /public
+const AVATAR_IMAGES: string[] = ["/hxhAbon.png", "/abon.jpeg", "/hxhAbon2.png", "/hxhAbon3.png", "/hxhAbon4.png", "/hxhAbon5.png"];
 
 export default function BlackHoleCanvas({
   WireframeComponent,
   onEnter,
   onExit,
-  initialExpanded = false, // Default to false for home page
 }: BlackHoleCanvasProps) {
-  // Set initial state based on prop
-  const [isExpanded, setIsExpanded] = useState(initialExpanded);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const containerRef = useRef<HTMLDivElement | null>(null);
 
   const [animState, setAnimState] = useState<AnimationState>("idle");
   const [showWireframe, setShowWireframe] = useState<boolean>(false);
+
+  // Image carousel state
+  const [imageIndex, setImageIndex] = useState(0);
+  const [imageVisible, setImageVisible] = useState(true);
+
+  // Image rotation (only runs when there is more than 1 image)
+  useEffect(() => {
+    if (AVATAR_IMAGES.length <= 1) return;
+
+    const FADE_MS = 300; // must match the CSS transition duration
+    const interval = setInterval(() => {
+      setImageVisible(false); // start fade-out
+      setTimeout(() => {
+        setImageIndex((prev) => (prev + 1) % AVATAR_IMAGES.length);
+        setImageVisible(true); // fade back in with the new image
+      }, FADE_MS);
+    }, 2000); // change this number to control how long each image stays
+
+    return () => clearInterval(interval);
+  }, []);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -205,30 +224,26 @@ export default function BlackHoleCanvas({
           onClick={handleAvatarClick}
           onMouseEnter={() => animState !== "expanse" && setGlobalState("collapse")}
           onMouseLeave={() => animState !== "expanse" && setGlobalState("idle")}
-          className={`group absolute z-10 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 cursor-pointer transition-all duration-500 ease-in-out ${
+          className={`w-[140px] h-[140px] md:w-[290px] md:h-[290px] group absolute z-10 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 cursor-pointer transition-all duration-500 ease-in-out ${
             animState === "expanse"
               ? "opacity-0 scale-50 pointer-events-none"
               : "opacity-100 scale-100"
           }`}
-          style={{ width: "290px", height: "290px" }}
         >
-          {/* Strictly locked 290px x 290px circle */}
           <div
-            className="rounded-full border-2 border-[var(--primary-color,#00ffff)] shadow-[0_0_20px_var(--primary-color)] group-hover:shadow-[0_0_40px_var(--primary-color)] transition-all duration-500 overflow-hidden bg-black flex items-center justify-center"
-            style={{ width: "290px", height: "290px", minWidth: "290px", minHeight: "290px" }}
+            className="w-[140px] h-[140px] min-w-[140px] min-h-[140px] md:w-[290px] md:h-[290px] md:min-w-[290px] md:min-h-[290px] rounded-full border-2 border-[var(--primary-color,#00ffff)] shadow-[0_0_20px_var(--primary-color)] group-hover:shadow-[0_0_40px_var(--primary-color)] transition-all duration-500 overflow-hidden bg-[linear-gradient(135deg,#000000_0%,#05070D_40%,#0B0F1A_75%,#000000_100%)] flex items-center justify-center relative"
           >
-            <img
-              src="/hxhAbon.png"
-              alt="Mechatronics & Software Engineer"
-              className="rounded-full pointer-events-none"
-              style={{
-                width: "290px",
-                height: "290px",
-                maxWidth: "290px",
-                maxHeight: "290px",
-                objectFit: "cover",
-              }}
-            />
+            {AVATAR_IMAGES.map((src, i) => (
+              <img
+                key={src}
+                src={src}
+                alt="Mechatronics & Software Engineer"
+                className="absolute inset-0 w-full h-full rounded-full pointer-events-none object-cover transition-opacity duration-300 ease-in-out"
+                style={{
+                  opacity: i === imageIndex && imageVisible ? 1 : 0,
+                }}
+              />
+            ))}
           </div>
         </div>
       )}

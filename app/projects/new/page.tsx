@@ -146,7 +146,7 @@ export default function NewProjectPage() {
     // on small phones. Everything else in this file was already responsive
     // and is untouched.
     <div className="fixed inset-0 z-50 w-full h-full overflow-y-auto bg-black text-white p-4 sm:p-6 md:p-12">
-      <div className="pt-6 max-w-3xl mx-auto flex flex-col gap-8 pb-32">
+      <div className="new pt-24 max-w-3xl mx-auto flex flex-col gap-8 pb-32 ">
         
         {/* Header */}
         <div className="flex items-center justify-between gap-3 flex-wrap border-b border-white/20 pb-4">

@@ -17,8 +17,8 @@ export default function SkillsPage() {
 
   // New Skill Form State
   const [newName, setNewName] = useState("");
-  const [newColor, setNewColor] = useState("#00ffff");
-  const [newLevel, setNewLevel] = useState(50);
+  const [newColor, setNewColor] = useState("#00ffcc");
+  const [newLevel, setNewLevel] = useState(75);
 
   // Load Initial Data
   useEffect(() => {
@@ -85,21 +85,27 @@ export default function SkillsPage() {
     .join(" ");
 
   return (
-    // CHANGED: fixed h-[calc(100vh-90px)] + overflow-hidden clipped content on
-    // mobile once the radar + list needed more vertical room than the viewport.
-    // Below md we let the page scroll; at md+ we restore the original locked
-    // viewport height / hidden overflow behavior exactly as before.
-    <div className="relative w-full min-h-[calc(100vh-90px)] overflow-y-auto md:h-[calc(100vh-90px)] md:overflow-hidden">
-      {/* 1. CLEAN STAR CANVAS BACKGROUND (NO AVATAR / NO DETAILS BOX) */}
+    // FIX: dropped `h-[calc(100vh-90px)]` + `overflow-hidden` at md+.
+    // That combo hard-clipped anything taller than one screen, and no
+    // amount of overflow-y-auto on descendants could undo an ancestor's
+    // overflow-hidden. min-h alone lets the page grow and scroll normally
+    // at every breakpoint, so nothing is ever unreachable again.
+    <div className="relative w-full min-h-[calc(100vh-90px)]">
+      {/* 1. CLEAN STAR CANVAS BACKGROUND */}
       <StarBackground />
 
       {/* 2. PAGE CONTENT LAYER */}
-      <div className="relative z-10 w-full min-h-full px-4 py-8 sm:px-8 sm:py-4 text-white flex flex-col md:flex-row items-center justify-center gap-8 md:gap-12">
+      {/* FIX: removed the extra `md:overflow-y-auto` here too — this
+          element no longer needs to own any scroll, the page does. */}
+      <div className="container relative z-10 w-full px-4 py-6 md:px-8 md:py-10 text-white flex flex-col md:flex-row items-center md:items-start justify-center gap-8 md:gap-16 pb-16">
         
         {/* LEFT SIDE: RADAR SVG GRAPH */}
-        <div className="flex flex-col items-center gap-4 flex-shrink-0">
-          {/* CHANGED: fixed 300x300 shrunk to 260x260 below sm so it never
-              crowds a narrow phone screen; unchanged at sm and up. */}
+        {/* FIX: sticky + self-start keeps the chart pinned in view while
+            you scroll the list beside it on desktop — this is what the
+            fixed-height/overflow-hidden setup was trying to achieve, but
+            sticky does it natively and can't clip anything. Mobile is
+            unaffected (sticky only applies at md+). */}
+        <div className="flex flex-col items-center gap-4 flex-shrink-0 md:sticky md:top-28 md:self-start">
           <div className="relative w-[260px] h-[260px] sm:w-[300px] sm:h-[300px]">
             <svg className="w-full h-full overflow-visible" viewBox="0 0 300 300">
               {/* Background Web Rings */}
@@ -142,8 +148,8 @@ export default function SkillsPage() {
               {skills.length > 0 && (
                 <polygon
                   points={radarPolygonPoints}
-                  fill="rgba(255, 255, 255, 0.1)"
-                  stroke="rgba(255, 255, 255, 0.6)"
+                  fill="rgba(0, 255, 204, 0.1)"
+                  stroke="var(--primary-color, #00ffcc)"
                   strokeWidth="2"
                 />
               )}
@@ -167,57 +173,60 @@ export default function SkillsPage() {
           </div>
 
           <div className="flex items-center gap-2">
-            <p className="text-gray-400 font-semibold text-xs tracking-widest uppercase">
-              based on level / proficiency
+            <p className="text-gray-400 font-mono text-xs tracking-widest uppercase">
+              // proficiency_matrix
             </p>
             {isSaving && (
-              <span className="text-xs text-[var(--primary-color)] animate-pulse">
+              <span className="text-xs text-[var(--primary-color,#00ffcc)] animate-pulse font-mono">
                 • Syncing...
               </span>
             )}
           </div>
         </div>
 
-        {/* RIGHT SIDE: INTERNAL SCROLLABLE LIST */}
-        {/* CHANGED: max-h-[80vh] + overflow-y-auto now only apply at md+.
-            On mobile the outer page already scrolls, so we don't want a
-            scroll-inside-a-scroll trap on touch devices. */}
-        <div className="flex flex-col gap-6 w-full max-w-xl md:max-h-[80vh] md:overflow-y-auto pr-2 custom-scrollbar">
+        {/* RIGHT SIDE: LIST & ADD FORM */}
+        {/* FIX: removed `md:max-h-[75vh] overflow-y-auto` — this column no
+            longer tries to own its own bounded scroll region. It just
+            flows as part of the page, which the page now scrolls. */}
+        <div className="flex flex-col gap-6 w-full max-w-xl pr-1 md:pr-3 custom-scrollbar">
           
           {/* SKILLS LIST */}
           <div className="grid grid-cols-1 gap-4">
             {skills.map((skill) => (
               <div
                 key={skill.id}
-                className="flex flex-col gap-2 p-4 bg-black/50 border border-white/10 rounded-2xl backdrop-blur-md"
+                className="flex flex-col gap-3 p-4 bg-black/60 border border-neutral-800 rounded-xl backdrop-blur-md shadow-lg"
               >
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
                     <span
-                      className="w-4 h-4 rounded-sm shadow-sm"
-                      style={{ backgroundColor: skill.color }}
+                      className="w-3.5 h-3.5 rounded-sm shadow-[0_0_8px_currentColor]"
+                      style={{ backgroundColor: skill.color, color: skill.color }}
                     />
-                    <span className="font-bold text-lg">{skill.name}</span>
+                    <span className="font-mono font-bold text-base md:text-lg tracking-wide text-white">
+                      {skill.name}
+                    </span>
                   </div>
 
                   {isLoggedIn && (
                     <button
                       onClick={() => handleRemoveSkill(skill.id)}
-                      className="text-red-400 hover:text-red-300 text-xs font-semibold px-2 py-1 rounded bg-red-950/40 border border-red-500/30 transition-colors"
+                      className="text-red-400 hover:text-red-300 text-xs font-mono px-2.5 py-1 rounded bg-red-950/40 border border-red-500/30 transition-colors"
                     >
-                      Delete
+                      DELETE
                     </button>
                   )}
                 </div>
 
                 {/* Progress Bar & Slider */}
                 <div className="flex items-center gap-4">
-                  <div className="w-full bg-gray-900 h-3 rounded-full overflow-hidden border border-white/20">
+                  <div className="w-full bg-neutral-900 h-2.5 rounded-full overflow-hidden border border-neutral-800">
                     <div
-                      className="h-full transition-all duration-300 rounded-full"
+                      className="h-full transition-all duration-300 rounded-full shadow-[0_0_8px_currentColor]"
                       style={{
                         width: `${skill.level}%`,
                         backgroundColor: skill.color,
+                        color: skill.color,
                       }}
                     />
                   </div>
@@ -231,10 +240,10 @@ export default function SkillsPage() {
                       onChange={(e) =>
                         handleLevelChange(skill.id, Number(e.target.value))
                       }
-                      className="w-28 accent-[var(--primary-color)] cursor-pointer"
+                      className="w-28 accent-[var(--primary-color,#00ffcc)] cursor-pointer"
                     />
                   ) : (
-                    <span className="text-xs font-mono text-gray-400 w-10 text-right">
+                    <span className="text-xs font-mono text-neutral-400 w-10 text-right">
                       {skill.level}%
                     </span>
                   )}
@@ -243,49 +252,59 @@ export default function SkillsPage() {
             ))}
           </div>
 
-          {/* ADD SKILL FORM (Admin Only) */}
+          {/* SPACIOUS ADD SKILL FORM (Admin Only) */}
           {isLoggedIn && (
             <form
               onSubmit={handleAddSkill}
-              className="flex flex-wrap items-center gap-4 p-4 bg-black/80 border border-[var(--primary-color)] rounded-2xl shadow-lg backdrop-blur-md"
+              className="flex flex-col gap-4 p-5 bg-black/90 border border-[var(--primary-color,#00ffcc)]/50 rounded-xl shadow-[0_0_20px_rgba(0,255,204,0.1)] backdrop-blur-md mt-2"
             >
-              <input
-                type="text"
-                placeholder="Skill Name"
-                value={newName}
-                onChange={(e) => setNewName(e.target.value)}
-                className="flex-1 min-w-[140px] p-2 bg-black/50 border border-white/20 rounded-xl text-white focus:outline-none focus:border-[var(--primary-color)]"
-                required
-              />
-
-              <div className="flex items-center gap-2">
-                <span className="text-xs text-gray-400">Color:</span>
-                <input
-                  type="color"
-                  value={newColor}
-                  onChange={(e) => setNewColor(e.target.value)}
-                  className="w-8 h-8 rounded bg-transparent cursor-pointer border-none"
-                />
+              <div className="text-xs font-mono tracking-widest text-[var(--primary-color,#00ffcc)]">
+                // INJECT_NEW_SKILL
               </div>
 
-              <div className="flex items-center gap-2">
-                <span className="text-xs text-gray-400">{newLevel}%</span>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <input
-                  type="range"
-                  min="0"
-                  max="100"
-                  value={newLevel}
-                  onChange={(e) => setNewLevel(Number(e.target.value))}
-                  className="w-20 accent-[var(--primary-color)] cursor-pointer"
+                  type="text"
+                  placeholder="Skill Name (e.g. ROS 2, Next.js)"
+                  value={newName}
+                  onChange={(e) => setNewName(e.target.value)}
+                  className="p-3 bg-neutral-900/80 border border-neutral-700 rounded-lg text-white font-mono text-sm focus:outline-none focus:border-[var(--primary-color,#00ffcc)]"
+                  required
                 />
+
+                <div className="flex items-center justify-between px-3 py-2 bg-neutral-900/80 border border-neutral-700 rounded-lg">
+                  <span className="text-xs font-mono text-neutral-400">Theme Color:</span>
+                  <input
+                    type="color"
+                    value={newColor}
+                    onChange={(e) => setNewColor(e.target.value)}
+                    className="w-8 h-8 rounded bg-transparent cursor-pointer border-0"
+                  />
+                </div>
               </div>
 
-              <button
-                type="submit"
-                className="px-4 py-2 bg-[var(--primary-color)] text-black font-bold rounded-xl hover:opacity-90 transition-opacity text-sm"
-              >
-                + Add
-              </button>
+              <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-2">
+                <div className="flex items-center gap-3 w-full sm:w-auto flex-1">
+                  <span className="text-xs font-mono text-neutral-400 whitespace-nowrap">
+                    Level: {newLevel}%
+                  </span>
+                  <input
+                    type="range"
+                    min="0"
+                    max="100"
+                    value={newLevel}
+                    onChange={(e) => setNewLevel(Number(e.target.value))}
+                    className="w-full sm:w-48 accent-[var(--primary-color,#00ffcc)] cursor-pointer"
+                  />
+                </div>
+
+                <button
+                  type="submit"
+                  className="w-full sm:w-auto px-6 py-2.5 bg-[var(--primary-color,#00ffcc)] text-black font-mono font-bold rounded-lg hover:opacity-90 transition-opacity text-sm shadow-[0_0_10px_rgba(0,255,204,0.3)]"
+                >
+                  + ADD SKILL
+                </button>
+              </div>
             </form>
           )}
         </div>
