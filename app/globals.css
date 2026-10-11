@@ -1,32 +1,99 @@
 @import "tailwindcss";
 
 :root {
-  /* Default Cyan Theme */
-  --primary-color: #281c59; /* The main accent color (cyan) */
+  /* ===== LEGACY TOKENS (kept for pages not yet rebuilt — projects/new,
+     the project modal, etc. All still reference these directly) ===== */
+  --primary-color: #281c59;
   --primary-color-hover: var(--primary-color);
   --bg-color-stop-1: #000000;
   --bg-color-stop-2: #05070D;
   --bg-color-stop-3: #0B0F1A;
   --text-color-primary: #ffffff;
   --text-color-secondary: #aaaaaa;
-  --text-color-interactive: #666666; /* e.g., 'ENTER' and decorative lines */
+  --text-color-interactive: #666666;
+
+  /* ===== NEW MINIMALIST TOKENS =====
+     Philosophy: near-flat near-black background, thin 1px borders instead
+     of glow/blur, accent color shows up ONLY on hover/focus/active states
+     and small indicator dots/lines — never as a fill or a big glow. */
+  --bg-base: #08090b;
+  --bg-panel: #111318;
+  --bg-panel-hover: #15181f;
+  --border-subtle: rgba(255, 255, 255, 0.08);
+  --border-strong: rgba(255, 255, 255, 0.16);
+  --text-primary: #f2f2f2;
+  --text-secondary: #9a9a9f;
+  --text-tertiary: #55575c;
+  --positive: #22c55e;
+  --negative: #ef4444;
+  --radius-panel: 14px;
 }
 
 * {
   font-family: var(--font-Roboto-Condensed);
 }
-h1,h2,h3,h4{
+h1, h2, h3, h4 {
   font-family: var(--font-orbitron-sans);
 }
-/* Base Body Styles */
+
 body {
   background-color: var(--bg-color-stop-1);
   color: var(--text-color-primary);
   font-family: ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
-  overflow-x: hidden; /**Prevent page scroll during animation**/
 }
-button{
+
+button {
   background: none;
   border: none;
   outline: none;
+}
+
+/* ===== MINIMALIST UTILITY CLASSES =====
+   Used by the new Home page and (once rebuilt) Skills/Projects. Keep
+   using these instead of ad-hoc glow/shadow classes so the whole app
+   stays visually consistent with the new direction. */
+
+.panel {
+  background: var(--bg-panel);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-panel);
+  transition: border-color 150ms ease, background-color 150ms ease;
+}
+
+.panel-interactive {
+  cursor: pointer;
+}
+.panel-interactive:hover {
+  border-color: var(--primary-color);
+  background: var(--bg-panel-hover);
+}
+.panel-interactive:focus-visible {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 1px var(--primary-color);
+}
+
+.accent-text {
+  color: var(--primary-color);
+}
+.accent-dot {
+  background: var(--primary-color);
+}
+.accent-border-hover:hover {
+  border-color: var(--primary-color);
+}
+
+.text-positive {
+  color: var(--positive);
+}
+.text-negative {
+  color: var(--negative);
+}
+
+.eyebrow {
+  font-family: ui-monospace, "SFMono-Regular", Menlo, monospace;
+  font-size: 0.7rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--text-tertiary);
 }
